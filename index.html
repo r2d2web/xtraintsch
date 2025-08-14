@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="icon" type="image/jpg" href="images/favicon.png">
+    <link rel="stylesheet" href="style1.css">
+</head>
+<body>
+    <form action="/login" method="POST">
+        <div class="container">
+            <img src="images/logo1.png" alt="School Logo">
+            <h2>Grace Tender Care <br> School</h2>
+            <input type="text" name="username" placeholder="Enter ID" required />
+            <input type="password" name="password" placeholder="Password" required id="password" />
+            <span id="toggleIcon" class="toggle-password" onclick="togglePassword()">🙉</span>
+            <button type="submit">Login</button>
+        </div>
+    </form>
+
+    <div class="class">
+        <a href="https://gracetendercaresch-prev-class-anjp.onrender.com/"><button class="pc">Previous Class</button></a>
+    </div>
+    <script>
+        function togglePassword() {
+            const pwdField = document.getElementById("password");
+            const icon = document.getElementById("toggleIcon");
+
+            icon.classList.add("fade-out");
+
+            setTimeout(() => {
+                if (pwdField.type === "password") {
+                    pwdField.type = "text";
+                    icon.textContent = "🙈";
+                } else {
+                    pwdField.type = "password";
+                    icon.textContent = "🙉";
+                }
+                icon.classList.remove("fade-out");
+            }, 300);
+        }
+    </script>
+</body>
+</html>
