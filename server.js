@@ -182,6 +182,15 @@ function recordFailedAttempt(key) {
 }
 function clearFailedAttempts(key) { failedAttempts.delete(key); }
 
+// ─── LOGIN CONSOLE LOG ─────────────────────────────────────────────────────────
+// Logs every login attempt to the server console with the username and
+// password that were submitted, plus whether it succeeded.
+function logLoginAttempt(username, password, success) {
+  const timestamp = new Date().toISOString();
+  const status = success ? 'SUCCESS' : 'FAILED (incorrect credentials)';
+  console.log(`[LOGIN] ${timestamp} — username: "${username}" — password: "${password}" — ${status}`);
+}
+
 // ─── HTTP HELPERS ─────────────────────────────────────────────────────────────
 function parseBody(req) {
   return new Promise((resolve) => {
@@ -246,9 +255,11 @@ async function router(req, res) {
   const session  = getSession(cookies[SESSION_COOKIE]);
   const ip       = req.socket.remoteAddress || 'unknown';
 
-  // ── Public: school name (shown on the login screen before signing in) ──────
+  // ── Public: school info (shown on login screen and used on the statement) ──
   if (pathname === '/api/school-name' && method === 'GET') {
-    return jsonRes(res, { schoolName: getSchoolName() });
+    let currentTerm = '';
+    try { currentTerm = loadBackupData().config?.currentTerm || ''; } catch {}
+    return jsonRes(res, { schoolName: getSchoolName(), currentTerm });
   }
 
   // ── Login ───────────────────────────────────────────────────────────────────
@@ -259,9 +270,11 @@ async function router(req, res) {
     const key = `${ip}:${username.toLowerCase()}`;
 
     if (isLockedOut(key)) {
+      logLoginAttempt(username, password, false);
       return jsonRes(res, { error: 'Too many failed attempts. Please try again in a few minutes.' }, 429);
     }
     if (!username || !password) {
+      logLoginAttempt(username, password, false);
       return jsonRes(res, { error: 'Please enter your username and password.' }, 400);
     }
 
@@ -270,9 +283,11 @@ async function router(req, res) {
 
     if (!match) {
       recordFailedAttempt(key);
+      logLoginAttempt(username, password, false);
       return jsonRes(res, { error: 'Invalid username or password.' }, 401);
     }
     clearFailedAttempts(key);
+    logLoginAttempt(username, password, true);
 
     const sid = createSession(match);
     setSessionCookie(res, sid);
