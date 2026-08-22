@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<title>Ledger — Parent Portal</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="icon" type="image/png" href="/favicon.jpeg">
+<style>
+  /* Portal-only layout tweaks (kept out of the shared stylesheet on purpose) */
+  .portal-shell {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+  .portal-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .portal-topbar .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text2);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .portal-topbar .brand .logo-icon-sm {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--gold-dim); color: var(--gold); font-weight: 700; font-size: 14px;
+  }
+  .welcome-line { color: var(--text2); font-size: 13px; margin-bottom: 18px; }
+  .welcome-line strong { color: var(--text); }
+
+  .portal-error-banner {
+    background: var(--red-dim);
+    border: 1px solid rgba(255,107,138,0.3);
+    color: var(--red-text);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 480px) {
+    .portal-shell { padding: 16px 12px 50px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN PAGE ═══ -->
+<div id="loginPage" class="page active">
+  <div class="login-bg">
+    <div class="login-orb orb1"></div>
+    <div class="login-orb orb2"></div>
+    <div class="login-orb orb3"></div>
+  </div>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-icon">₡</div>
+      <h1>Ledger</h1>
+      <p>Parent Portal</p>
+    </div>
+
+    <div class="login-panel active">
+      <form id="loginForm" class="login-form">
+        <div class="field-group">
+          <label>Username</label>
+          <input type="text" id="loginUsername" class="input-field" placeholder="Enter username" autocomplete="username"/>
+        </div>
+        <div class="field-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" class="input-field" placeholder="Enter password" autocomplete="current-password"/>
+        </div>
+        <div id="loginError" class="error-msg hidden"></div>
+        <button type="submit" class="btn-primary btn-full">
+          <span>Sign In to View Fees</span><span class="btn-arrow">→</span>
+        </button>
+      </form>
+    </div>
+
+    <div class="login-footer"><span id="loginFooterSchoolName">School</span> &nbsp;·&nbsp; Parent Portal</div>
+  </div>
+</div>
+
+<!-- ═══ PROFILE PAGE ═══ -->
+<div id="profilePage" class="page hidden">
+  <div class="portal-shell">
+    <div class="portal-topbar">
+      <button class="btn-back" id="backToLoginBtn">← Back</button>
+      <div class="brand">
+        <span class="logo-icon-sm">₡</span>
+        <span id="topbarSchoolName">School</span>
+      </div>
+      <div style="width:28px;"></div>
+    </div>
+
+    <div class="welcome-line" id="welcomeLine"></div>
+
+    <div id="wardSwitcher" class="filter-row hidden" style="margin-bottom:14px;"></div>
+
+    <div id="portalErrorBanner" class="portal-error-banner hidden"></div>
+
+    <div class="profile-card" id="profileCard" style="display:none;">
+      <div class="profile-top">
+        <div class="profile-avatar" id="profileAvatar">?</div>
+        <div class="profile-info">
+          <h2 id="profileName" class="profile-name">Student Name</h2>
+          <div class="profile-meta">
+            <span class="badge" id="profileId">ID</span>
+            <span class="badge" id="profileClass">Class</span>
+          </div>
+          <div class="payment-status-badge" id="profileStatusBadge">Status</div>
+        </div>
+        <div class="profile-header-actions">
+          <button class="btn-secondary" id="printStatementBtn">⎙ Print Statement</button>
+        </div>
+      </div>
+
+      <div class="fee-cards">
+        <div class="fee-card">
+          <div class="fee-card-label">Tuition Fee</div>
+          <div class="fee-amounts">
+            <div><div class="fee-small">Required</div><div class="fee-amount" id="profileFeeRequired">GH₡0</div></div>
+            <div><div class="fee-small">Paid</div><div class="fee-amount paid" id="profileFeePaid">GH₡0</div></div>
+            <div><div class="fee-small">Balance</div><div class="fee-amount balance" id="profileFeeBalance">GH₡0</div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-bar"><div class="progress-fill" id="feeProgress" style="width:0%"></div></div>
+            <span class="progress-pct" id="feePct">0%</span>
+          </div>
+        </div>
+        <div class="fee-card" id="feedingFeeCard">
+          <div class="fee-card-label">Feeding Fee</div>
+          <div class="fee-amounts">
+            <div><div class="fee-small">Required</div><div class="fee-amount" id="profileFeedingRequired">GH₡0</div></div>
+            <div><div class="fee-small">Paid</div><div class="fee-amount paid" id="profileFeedingPaid">GH₡0</div></div>
+            <div><div class="fee-small">Balance</div><div class="fee-amount balance" id="profileFeedingBalance">GH₡0</div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-bar"><div class="progress-fill feeding" id="feedingProgress" style="width:0%"></div></div>
+            <span class="progress-pct" id="feedingPct">0%</span>
+          </div>
+        </div>
+        <div class="fee-card" id="examFeeCard">
+          <div class="fee-card-label">Exam Fee</div>
+          <div class="fee-amounts">
+            <div><div class="fee-small">Required</div><div class="fee-amount" id="profileExamRequired">GH₡0</div></div>
+            <div><div class="fee-small">Paid</div><div class="fee-amount paid" id="profileExamPaid">GH₡0</div></div>
+            <div><div class="fee-small">Balance</div><div class="fee-amount balance" id="profileExamBalance">GH₡0</div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-bar"><div class="progress-fill exam" id="examProgress" style="width:0%"></div></div>
+            <span class="progress-pct" id="examPct">0%</span>
+          </div>
+        </div>
+        <div class="fee-card arrears-card" id="arrearsCard">
+          <div class="fee-card-label">Arrears</div>
+          <div class="fee-amounts">
+            <div><div class="fee-small">Amount Owed</div><div class="fee-amount balance" id="profileArrearsAmount">GH₡0</div></div>
+            <div><div class="fee-small">Paid</div><div class="fee-amount paid" id="profileArrearsPaid">GH₡0</div></div>
+            <div><div class="fee-small">Remaining</div><div class="fee-amount balance" id="profileArrearsBalance">GH₡0</div></div>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-bar"><div class="progress-fill arrears" id="arrearsProgress" style="width:0%"></div></div>
+            <span class="progress-pct" id="arrearsPct">0%</span>
+          </div>
+        </div>
+        <div id="customFeeCards" style="display:contents;"></div>
+      </div>
+
+      <div class="overall-progress">
+        <div class="overall-label">
+          <span>Overall Payment Completion</span>
+          <span id="overallPct">0%</span>
+        </div>
+        <div class="progress-bar large">
+          <div class="progress-fill overall" id="overallProgress" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="payment-history">
+        <h3 class="section-sub-title">Payment History</h3>
+        <div id="paymentHistoryList" class="history-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="printArea"></div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
