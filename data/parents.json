@@ -1,0 +1,26 @@
+[
+  {
+    "username": "ama.parent",
+    "password": "ama2026",
+    "parentName": "Mr. Yaw Boateng",
+    "studentIds": ["STU-1001", "STU-1003"]
+  },
+  {
+    "username": "kojo.parent",
+    "password": "kojo2026",
+    "parentName": "Mrs. Efua Mensah",
+    "studentIds": ["STU-1002"]
+  },
+  {
+    "username": "ABC",
+    "password": "123",
+    "parentName": "Mrs. Efua Mensah",
+    "studentIds": ["STU260001"]
+  },
+{
+    "username": "IJK",
+    "password": "123",
+    "parentName": "Mrs. Mama",
+    "studentIds": ["STU260004"]
+  }
+]
